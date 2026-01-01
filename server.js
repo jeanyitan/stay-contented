@@ -195,7 +195,8 @@ async function runJob(jobId) {
     // Simple download URL (serving static outputs)
     job.progress = 100;
     job.status = "done";
-    job.downloadUrl = `/downloads/${jobId}/`;
+    job.downloadUrl = `/downloads/${jobId}/content_plan.json`;
+
 
 
   } catch (err) {

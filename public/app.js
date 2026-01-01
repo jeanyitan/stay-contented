@@ -17,12 +17,17 @@ async function pollJob(jobId) {
     }
 
     if (job.status === "done") {
-      showStatus(`
-        <strong>Done.</strong><br/>
-        <a href="${job.downloadUrl}" target="_blank">Download outputs</a>
-      `);
-      return;
-    }
+        showStatus(`
+          <strong>Done.</strong><br/>
+          <ul>
+            <li><a href="/downloads/${jobId}/content_plan.json" target="_blank">content_plan.json</a></li>
+            <li><a href="/downloads/${jobId}/captions.json" target="_blank">captions.json</a></li>
+            <li><a href="/downloads/${jobId}/editorial_visuals.json" target="_blank">editorial_visuals.json</a></li>
+          </ul>
+        `);
+        return;
+      }
+      
 
     showStatus(`<strong>Status:</strong> ${job.status} — ${job.progress}%`);
     await new Promise(r => setTimeout(r, 1500));
