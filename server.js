@@ -10,6 +10,7 @@ import path from "path";
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "2mb" }));
+app.use(express.static("public"));
 
 const upload = multer({ dest: "uploads/" });
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -194,7 +195,8 @@ async function runJob(jobId) {
     // Simple download URL (serving static outputs)
     job.progress = 100;
     job.status = "done";
-    job.downloadUrl = `${process.env.BASE_URL}/downloads/${jobId}/`;
+    job.downloadUrl = `/downloads/${jobId}/`;
+
 
   } catch (err) {
     job.status = "error";
@@ -236,3 +238,4 @@ app.get("/api/jobs/:id", (req, res) => {
 app.use("/downloads", express.static("outputs"));
 
 app.listen(3000, () => console.log("Server running on http://localhost:3000"));
+
