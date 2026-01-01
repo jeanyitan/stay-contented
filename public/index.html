@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Stay Contented</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Stay Contented</h1>
+    <p class="sub">AI-powered content support for growing teams.</p>
+
+    <form id="contentForm">
+      <div class="grid">
+        <label>Brand name
+          <input name="brandName" required />
+        </label>
+
+        <label>Industry
+          <input name="industry" placeholder="e.g., ecommerce, SaaS, skincare" required />
+        </label>
+
+        <label>Offer summary
+          <input name="offerSummary" required />
+        </label>
+
+        <label>Month (YYYY-MM)
+          <input name="month" value="2026-02" required />
+        </label>
+
+        <label>Posts
+          <select name="postsCount">
+            <option value="16" selected>16</option>
+            <option value="24">24</option>
+          </select>
+        </label>
+
+        <label>Tone
+          <select name="tone">
+            <option value="professional" selected>Professional</option>
+            <option value="friendly">Friendly</option>
+            <option value="bold">Bold</option>
+          </select>
+        </label>
+
+        <label>Mode
+          <select name="mode">
+            <option value="editorial" selected>Editorial / Graphic</option>
+            <option value="product_model">AI Model / Product</option>
+          </select>
+        </label>
+
+        <label>Website (optional)
+          <input name="website" placeholder="https://..." />
+        </label>
+      </div>
+
+      <button type="submit">Generate</button>
+    </form>
+
+    <section id="status" class="status hidden"></section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
