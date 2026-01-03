@@ -1,0 +1,24 @@
+{
+    "brand_id": "acme",
+    "style": {
+      "palette": ["#111111", "#F5F2ED", "#C9D6DF"],
+      "background": "warm off-white",
+      "typography": "modern sans-serif",
+      "mood": "clean, calm, premium",
+      "composition": "lots of whitespace, centered headline, minimal icon",
+      "do_not": ["busy layout", "neon colors", "photorealistic people", "complex scenes"]
+    },
+    "editorial": {
+      "layout_templates": ["headline_center", "headline_top", "split_headline_subtext"],
+      "icon_style": "monochrome line icon, single icon max"
+    },
+    "product_model": {
+      "style_preset": "lifestyle_clean",
+      "lighting": "soft natural",
+      "background": "neutral",
+      "camera": "editorial product photography",
+      "model_notes": "tasteful, commercial, no logos unless product label"
+    }
+  }
+
+  
