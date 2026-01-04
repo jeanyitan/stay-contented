@@ -1,2 +1,2 @@
-/api/*  https://stay-contented.onrender.com/:splat  200
+/api/*  https://stay-contented.onrender.com/api/:splat  200
 /downloads/*  https://stay-contented.onrender.com/downloads/:splat  200
