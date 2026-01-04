@@ -25,6 +25,8 @@ import archiver from "archiver";
 
 
 // ---------------------- App setup ----------------------
+const OUTPUTS_DIR = process.env.OUTPUTS_DIR || "/var/data/outputs";
+
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "2mb" }));
@@ -420,7 +422,7 @@ async function runJob(jobId) {
     );
 
     // 4) Save outputs
-    const outDir = path.join("outputs", jobId);
+    const outDir = path.join(OUTPUTS_DIR, jobId);
     ensureDir(outDir);
 
     writeFileSafe(path.join(outDir, "content_plan.json"), JSON.stringify(planJson, null, 2));
@@ -514,11 +516,11 @@ app.get("/api/jobs/:id", (req, res) => {
 });
 
 // Serve outputs
-app.use("/downloads", express.static("outputs"));
+app.use("/downloads", express.static(OUTPUTS_DIR));
 
 app.get("/downloads/:jobId.zip", (req, res) => {
   const { jobId } = req.params;
-  const outDir = path.join("outputs", jobId);
+  const outDir = path.join(OUTPUTS_DIR, jobId);
 
   if (!fs.existsSync(outDir)) {
     return res.status(404).json({ error: "Job not found" });
