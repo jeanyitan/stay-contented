@@ -4,81 +4,148 @@
   <meta charset="utf-8" />
   <title>Stay Contented</title>
   <link rel="stylesheet" href="./styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <main class="container">
-    <h1>Stay Contented</h1>
-    <p class="sub">AI-powered content support for growing teams.</p>
-
-    <form id="contentForm">
-      <div class="grid">
-        <label>Brand name
-          <input name="brandName" required />
-        </label>
-
-        <label>Industry
-          <select name="industry" required>
-            <option value="">Select industry...</option>
-            <option value="ecommerce">Ecommerce</option>
-            <option value="saas">SaaS</option>
-            <option value="skincare">Skincare</option>
-            <option value="healthcare">Healthcare</option>
-            <option value="education">Education</option>
-            <option value="finance">Finance</option>
-            <option value="real-estate">Real Estate</option>
-            <option value="food-delivery">Food Delivery</option>
-            <option value="logistics">Logistics</option>
-            <option value="travel">Travel</option>
-            <option value="fitness">Fitness</option>
-            <option value="other">Other</option>
-          </select>
-        </label>
-
-        <label id="industryOtherLabel" style="display: none;">Specify industry
-          <input name="industryOther" placeholder="Enter your industry..." />
-        </label>
-
-        <label>What do you sell
-          <input name="offerSummary" required />
-        </label>
-
-        <label>Month (YYYY-MM)
-          <input name="month" value="2026-02" required />
-        </label>
-
-        <label>Posts
-          <select name="postsCount">
-            <option value="16" selected>16</option>
-            <option value="24">24</option>
-          </select>
-        </label>
-
-        <label>Tone
-          <select name="tone">
-            <option value="professional" selected>Professional</option>
-            <option value="friendly">Friendly</option>
-            <option value="bold">Bold</option>
-          </select>
-        </label>
-
-        <label>Mode
-          <select name="mode">
-            <option value="editorial" selected>Editorial / Graphic</option>
-            <option value="product_model">AI Model / Product</option>
-          </select>
-        </label>
-
-        <label>Website (optional)
-          <input name="website" placeholder="https://..." />
-        </label>
+  <main class="hero">
+    <header class="header">
+      <div class="logo">
+        <span class="logo-text">STAY</span>
+        <span class="logo-accent">CONTENTED</span>
       </div>
+    </header>
 
-      <button type="submit">Generate</button>
-    </form>
+    <section class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          Generate premium <span class="highlight">AI content</span><br>
+          and visuals <em class="italic">for<br>
+          your brand</em>
+        </h1>
+        <p class="hero-subtitle">
+          AI-powered content support for growing teams
+        </p>
+        <button class="cta-button" onclick="scrollToForm()">Get started</button>
+      </div>
+    </section>
 
-    <section id="status" class="status hidden"></section>
+    <section class="visual-grid">
+      <div class="grid-item grid-1">
+        <div class="placeholder-content">
+          <span class="placeholder-text">Content Planning</span>
+        </div>
+      </div>
+      <div class="grid-item grid-2">
+        <div class="placeholder-content">
+          <span class="placeholder-text">Visual Creation</span>
+        </div>
+      </div>
+      <div class="grid-item grid-3">
+        <div class="placeholder-content">
+          <span class="placeholder-text">Brand Strategy</span>
+        </div>
+      </div>
+      <div class="grid-item grid-4">
+        <div class="placeholder-content">
+          <span class="placeholder-text">Social Media</span>
+        </div>
+      </div>
+    </section>
   </main>
 
+  <section class="form-section" id="form-section">
+    <div class="form-container">
+      <h2 class="form-title">Create your content plan</h2>
+      <p class="form-subtitle">Tell us about your brand and we'll generate a complete content strategy</p>
+      
+      <form id="contentForm" class="content-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Brand name</label>
+            <input name="brandName" class="form-input" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Industry</label>
+            <select name="industry" class="form-select" required>
+              <option value="">Select industry...</option>
+              <option value="ecommerce">Ecommerce</option>
+              <option value="saas">SaaS</option>
+              <option value="skincare">Skincare</option>
+              <option value="healthcare">Healthcare</option>
+              <option value="education">Education</option>
+              <option value="finance">Finance</option>
+              <option value="real-estate">Real Estate</option>
+              <option value="food-delivery">Food Delivery</option>
+              <option value="logistics">Logistics</option>
+              <option value="travel">Travel</option>
+              <option value="fitness">Fitness</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="industryOtherGroup" style="display: none;">
+            <label class="form-label">Specify industry</label>
+            <input name="industryOther" class="form-input" placeholder="Enter your industry..." />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">What do you sell</label>
+            <input name="offerSummary" class="form-input" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Month (YYYY-MM)</label>
+            <input name="month" class="form-input" value="2026-02" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Posts</label>
+            <select name="postsCount" class="form-select">
+              <option value="16" selected>16</option>
+              <option value="24">24</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tone</label>
+            <select name="tone" class="form-select">
+              <option value="professional" selected>Professional</option>
+              <option value="friendly">Friendly</option>
+              <option value="bold">Bold</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Mode</label>
+            <select name="mode" class="form-select">
+              <option value="editorial" selected>Editorial / Graphic</option>
+              <option value="product_model">AI Model / Product</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Website (optional)</label>
+            <input name="website" class="form-input" placeholder="https://..." />
+          </div>
+        </div>
+
+        <button type="submit" class="submit-button">Generate Content Plan</button>
+      </form>
+
+      <section id="status" class="status hidden"></section>
+    </div>
+  </section>
+
   <script src="./app.js"></script>
+  <script>
+    function scrollToForm() {
+      document.getElementById('form-section').scrollIntoView({ 
+        behavior: 'smooth' 
+      });
+    }
+  </script>
 </body>
 </html>

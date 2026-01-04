@@ -8,15 +8,15 @@ function showStatus(html) {
 
 // Handle industry dropdown "Other" option
 const industrySelect = document.querySelector('select[name="industry"]');
-const industryOtherLabel = document.getElementById("industryOtherLabel");
+const industryOtherGroup = document.getElementById("industryOtherGroup");
 
 industrySelect.addEventListener("change", function() {
   if (this.value === "other") {
-    industryOtherLabel.style.display = "block";
-    industryOtherLabel.querySelector('input[name="industryOther"]').required = true;
+    industryOtherGroup.style.display = "flex";
+    industryOtherGroup.querySelector('input[name="industryOther"]').required = true;
   } else {
-    industryOtherLabel.style.display = "none";
-    industryOtherLabel.querySelector('input[name="industryOther"]').required = false;
+    industryOtherGroup.style.display = "none";
+    industryOtherGroup.querySelector('input[name="industryOther"]').required = false;
   }
 });
 
