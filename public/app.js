@@ -8,7 +8,24 @@ function showStatus(html) {
 
 async function pollJob(jobId) {
   while (true) {
-    const res = await fetch(`http://localhost:3000/api/jobs/${jobId}`);
+    let res;
+    try {
+      res = await fetch(`/api/jobs/${jobId}`, { cache: "no-store" });
+    } catch (err) {
+      showStatus(
+        `<strong>Network error:</strong> Could not reach backend. Check Netlify _redirects and backend URL.`
+      );
+      return;
+    }
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      showStatus(
+        `<strong>Error:</strong> Job lookup failed (${res.status}).<br/><pre style="white-space:pre-wrap">${text}</pre>`
+      );
+      return;
+    }
+
     const job = await res.json();
 
     if (job.status === "error") {
@@ -17,20 +34,24 @@ async function pollJob(jobId) {
     }
 
     if (job.status === "done") {
-        showStatus(`
-          <strong>Done.</strong><br/>
-          <ul>
-            <li><a href="/downloads/${jobId}/content_plan.json" target="_blank">content_plan.json</a></li>
-            <li><a href="/downloads/${jobId}/captions.json" target="_blank">captions.json</a></li>
-            <li><a href="/downloads/${jobId}/editorial_visuals.json" target="_blank">editorial_visuals.json</a></li>
-          </ul>
-        `);
-        return;
-      }
-      
+      showStatus(`
+        <strong>Done.</strong><br/>
+        <ul>
+          <li><a href="/downloads/${jobId}/content_plan.json" target="_blank" rel="noopener">content_plan.json</a></li>
+          <li><a href="/downloads/${jobId}/captions.json" target="_blank" rel="noopener">captions.json</a></li>
+          <li><a href="/downloads/${jobId}/editorial_visuals.json" target="_blank" rel="noopener">editorial_visuals.json</a></li>
+          <li><a href="/downloads/${jobId}/editorial_visuals_compiled.json" target="_blank" rel="noopener">editorial_visuals_compiled.json</a></li>
+          <li><a href="/downloads/${jobId}/product_model_briefs.json" target="_blank" rel="noopener">product_model_briefs.json</a></li>
+        </ul>
+        <p style="margin-top:10px;">
+          <a href="/downloads/${jobId}/Editorial_Posts/" target="_blank" rel="noopener">Open Editorial_Posts folder</a>
+        </p>
+      `);
+      return;
+    }
 
     showStatus(`<strong>Status:</strong> ${job.status} — ${job.progress}%`);
-    await new Promise(r => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 1500));
   }
 }
 
@@ -38,6 +59,7 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const data = new FormData(form);
+
   const input = {
     brand: {
       name: data.get("brandName"),
@@ -49,8 +71,8 @@ form.addEventListener("submit", async (e) => {
         tone: data.get("tone"),
         style_notes: "clear, calm, no hype, no slang, no emojis",
         words_to_use: [],
-        words_to_avoid: ["guaranteed", "instant", "miracle", "viral"]
-      }
+        words_to_avoid: ["guaranteed", "instant", "miracle", "viral"],
+      },
     },
     campaign: {
       month: data.get("month"),
@@ -58,15 +80,15 @@ form.addEventListener("submit", async (e) => {
       primary_platform: "instagram",
       primary_goal: "increase awareness and consideration",
       cta_preference: ["save", "learn_more", "comment", "shop"],
-      compliance: { no_income_claims: true, no_medical_claims: true }
+      compliance: { no_income_claims: true, no_medical_claims: true },
     },
     content_mode: data.get("mode"),
     product_mode: {
       enabled: data.get("mode") === "product_model",
       product_names: [],
       product_descriptions: [],
-      image_style_preset: "lifestyle_clean"
-    }
+      image_style_preset: "lifestyle_clean",
+    },
   };
 
   showStatus("Creating job…");
@@ -74,10 +96,26 @@ form.addEventListener("submit", async (e) => {
   const payload = new FormData();
   payload.append("input_json", JSON.stringify(input));
 
-  const res = await fetch("http://localhost:3000/api/jobs", {
-    method: "POST",
-    body: payload
-  });
+  let res;
+  try {
+    res = await fetch("/api/jobs", {
+      method: "POST",
+      body: payload,
+    });
+  } catch (err) {
+    showStatus(
+      `<strong>Network error:</strong> Could not reach backend. Check Netlify _redirects and backend URL.`
+    );
+    return;
+  }
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    showStatus(
+      `<strong>Error:</strong> Job creation failed (${res.status}).<br/><pre style="white-space:pre-wrap">${text}</pre>`
+    );
+    return;
+  }
 
   const { jobId } = await res.json();
   showStatus(`Job started: ${jobId}`);
