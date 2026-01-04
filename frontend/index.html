@@ -17,10 +17,28 @@
         </label>
 
         <label>Industry
-          <input name="industry" placeholder="e.g., ecommerce, SaaS, skincare" required />
+          <select name="industry" required>
+            <option value="">Select industry...</option>
+            <option value="ecommerce">Ecommerce</option>
+            <option value="saas">SaaS</option>
+            <option value="skincare">Skincare</option>
+            <option value="healthcare">Healthcare</option>
+            <option value="education">Education</option>
+            <option value="finance">Finance</option>
+            <option value="real-estate">Real Estate</option>
+            <option value="food-delivery">Food Delivery</option>
+            <option value="logistics">Logistics</option>
+            <option value="travel">Travel</option>
+            <option value="fitness">Fitness</option>
+            <option value="other">Other</option>
+          </select>
         </label>
 
-        <label>Offer summary
+        <label id="industryOtherLabel" style="display: none;">Specify industry
+          <input name="industryOther" placeholder="Enter your industry..." />
+        </label>
+
+        <label>What do you sell
           <input name="offerSummary" required />
         </label>
 

@@ -6,6 +6,20 @@ function showStatus(html) {
   statusEl.classList.remove("hidden");
 }
 
+// Handle industry dropdown "Other" option
+const industrySelect = document.querySelector('select[name="industry"]');
+const industryOtherLabel = document.getElementById("industryOtherLabel");
+
+industrySelect.addEventListener("change", function() {
+  if (this.value === "other") {
+    industryOtherLabel.style.display = "block";
+    industryOtherLabel.querySelector('input[name="industryOther"]').required = true;
+  } else {
+    industryOtherLabel.style.display = "none";
+    industryOtherLabel.querySelector('input[name="industryOther"]').required = false;
+  }
+});
+
 async function pollJob(jobId) {
   while (true) {
     let res;
@@ -61,11 +75,17 @@ form.addEventListener("submit", async (e) => {
 
   const data = new FormData(form);
 
+  // Handle industry field - use "other" text if "other" is selected
+  let industry = data.get("industry");
+  if (industry === "other") {
+    industry = data.get("industryOther") || "other";
+  }
+
   const input = {
     brand: {
       name: data.get("brandName"),
       website: data.get("website") || "",
-      industry: data.get("industry"),
+      industry: industry,
       offer_summary: data.get("offerSummary"),
       target_customer: "",
       brand_voice: {
