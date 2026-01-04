@@ -37,6 +37,7 @@ async function pollJob(jobId) {
       showStatus(`
         <strong>Done.</strong><br/>
         <ul>
+          <li><a href="/downloads/${jobId}.zip" target="_blank" rel="noopener"><strong>Download everything (.zip)</strong></a></li>
           <li><a href="/downloads/${jobId}/content_plan.json" target="_blank" rel="noopener">content_plan.json</a></li>
           <li><a href="/downloads/${jobId}/captions.json" target="_blank" rel="noopener">captions.json</a></li>
           <li><a href="/downloads/${jobId}/editorial_visuals.json" target="_blank" rel="noopener">editorial_visuals.json</a></li>

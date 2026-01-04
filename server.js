@@ -2,7 +2,7 @@
  * server.js — Stay Contented MVP (clean version)
  *
  * What it does:
- * - Serves /public as the frontend
+ * - Serves /frontend as the frontend
  * - Accepts POST /api/jobs with input_json
  * - Runs: plan -> applyMixedMode (12 editorial / 4 product_model) -> captions -> editorial briefs
  * - Compiles:
@@ -21,12 +21,14 @@ import "dotenv/config";
 import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
+import archiver from "archiver";
+
 
 // ---------------------- App setup ----------------------
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "2mb" }));
-app.use(express.static("public"));
+app.use(express.static("frontend"));
 
 const upload = multer({ dest: "uploads/" });
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -513,6 +515,30 @@ app.get("/api/jobs/:id", (req, res) => {
 
 // Serve outputs
 app.use("/downloads", express.static("outputs"));
+
+app.get("/downloads/:jobId.zip", (req, res) => {
+  const { jobId } = req.params;
+  const outDir = path.join("outputs", jobId);
+
+  if (!fs.existsSync(outDir)) {
+    return res.status(404).json({ error: "Job not found" });
+  }
+
+  res.setHeader("Content-Type", "application/zip");
+  res.setHeader("Content-Disposition", `attachment; filename=Stay_Contented_${jobId}.zip`);
+
+  const archive = archiver("zip", { zlib: { level: 9 } });
+
+  archive.on("error", (err) => {
+    console.error(err);
+    res.status(500).send("ZIP creation failed");
+  });
+
+  archive.pipe(res);
+  archive.directory(outDir, false);
+  archive.finalize();
+});
+
 
 // ---------------------- Start ----------------------
 const PORT = process.env.PORT || 3000;
