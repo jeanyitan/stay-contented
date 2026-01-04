@@ -31,8 +31,53 @@ app.use(express.static("public"));
 const upload = multer({ dest: "uploads/" });
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// In-memory job store (MVP only)
+// In-memory job store (MVP only) with simple file persistence
 const jobs = new Map();
+
+// Simple persistence helpers
+function saveJobToFile(job) {
+  try {
+    const jobDir = path.join("jobs", job.id);
+    ensureDir(jobDir);
+    fs.writeFileSync(path.join(jobDir, "job.json"), JSON.stringify(job, null, 2));
+  } catch (err) {
+    console.error(`Failed to save job ${job.id}:`, err.message);
+  }
+}
+
+function loadJobFromFile(jobId) {
+  try {
+    const jobPath = path.join("jobs", jobId, "job.json");
+    if (fs.existsSync(jobPath)) {
+      const jobData = fs.readFileSync(jobPath, "utf8");
+      return JSON.parse(jobData);
+    }
+  } catch (err) {
+    console.error(`Failed to load job ${jobId}:`, err.message);
+  }
+  return null;
+}
+
+// Load existing jobs on startup
+function loadExistingJobs() {
+  try {
+    if (fs.existsSync("jobs")) {
+      const jobDirs = fs.readdirSync("jobs");
+      for (const jobId of jobDirs) {
+        const job = loadJobFromFile(jobId);
+        if (job) {
+          jobs.set(jobId, job);
+        }
+      }
+      console.log(`Loaded ${jobs.size} existing jobs from disk`);
+    }
+  } catch (err) {
+    console.error("Failed to load existing jobs:", err.message);
+  }
+}
+
+// Load jobs on startup
+loadExistingJobs();
 
 // ---------------------- Utilities ----------------------
 function ensureDir(dir) {
@@ -341,16 +386,22 @@ async function runJob(jobId) {
     let planJson = await callOpenAIJson(promptPlan(brandContext));
     planJson = applyMixedMode(planJson);
     job.progress = 35;
+    jobs.set(jobId, job);
+    saveJobToFile(job);
 
     // 2) Captions
     const captionsJson = await callOpenAIJson(promptCaptions(brandContext, planJson));
     job.progress = 55;
+    jobs.set(jobId, job);
+    saveJobToFile(job);
 
     // 3) Editorial briefs (still generated for all posts; we filter later)
     const visualsJson = await callOpenAIJson(
       promptEditorialVisuals(brandContext, planJson, captionsJson)
     );
     job.progress = 65;
+    jobs.set(jobId, job);
+    saveJobToFile(job);
 
     // Brand style + compiled prompts
     const brandStyle = makeDefaultBrandStyle(brandContext);
@@ -409,6 +460,7 @@ async function runJob(jobId) {
     job.error = err?.message || "Unknown error";
   } finally {
     jobs.set(jobId, job);
+    saveJobToFile(job);
   }
 }
 
@@ -417,13 +469,17 @@ app.post("/api/jobs", upload.array("product_images", 3), (req, res) => {
   const jobId = uuidv4();
   const input = JSON.parse(req.body.input_json || "{}");
 
-  jobs.set(jobId, {
+  const job = {
     id: jobId,
     status: "queued",
     progress: 0,
     input,
     createdAt: Date.now()
-  });
+  };
+
+  jobs.set(jobId, job);
+  saveJobToFile(job);
+  console.log(`Created job ${jobId}, total jobs in memory: ${jobs.size}`);
 
   runJob(jobId);
 
@@ -431,8 +487,27 @@ app.post("/api/jobs", upload.array("product_images", 3), (req, res) => {
 });
 
 app.get("/api/jobs/:id", (req, res) => {
-  const job = jobs.get(req.params.id);
-  if (!job) return res.status(404).json({ error: "Not found" });
+  console.log(`Looking up job ${req.params.id}, total jobs in memory: ${jobs.size}`);
+  console.log(`Available job IDs: ${Array.from(jobs.keys()).join(', ')}`);
+  
+  let job = jobs.get(req.params.id);
+  
+  // If not in memory, try to load from file
+  if (!job) {
+    console.log(`Job ${req.params.id} not in memory, trying to load from file`);
+    job = loadJobFromFile(req.params.id);
+    if (job) {
+      jobs.set(req.params.id, job);
+      console.log(`Loaded job ${req.params.id} from file`);
+    }
+  }
+  
+  if (!job) {
+    console.log(`Job ${req.params.id} not found in memory or file`);
+    return res.status(404).json({ error: "Not found" });
+  }
+  
+  console.log(`Found job ${req.params.id} with status: ${job.status}`);
   res.json(job);
 });
 
